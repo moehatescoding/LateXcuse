@@ -782,7 +782,7 @@
 
         // ⚠️  OpenRouter API key – runs client-side
         // Replace with your real OpenRouter API key
-        const OPENROUTER_TOKEN = 'YOUR_OPENROUTER_KEY_HERE';
+        const OPENROUTER_TOKEN = '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';
         const OPENROUTER_MODEL = 'stepfun/step-3.5-flash:free';
         const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
 
@@ -913,8 +913,7 @@ Respond ONLY in this JSON format, no markdown, no extra text:
                     { role: 'user', content: `Generate a level ${level} excuse` }
                 ],
                 max_tokens: 300,
-                temperature: 0.9,
-                response_format: { type: "json_object" }
+                temperature: 0.9
             };
 
             const res = await fetch(OPENROUTER_ENDPOINT, {
@@ -934,8 +933,12 @@ Respond ONLY in this JSON format, no markdown, no extra text:
             }
 
             const data = await res.json();
-            const rawText = data?.choices?.[0]?.message?.content ?? '';
-            return JSON.parse(rawText.trim());
+            let rawText = data?.choices?.[0]?.message?.content ?? '';
+
+            // Clean markdown blocks if the model wrapped the JSON in them
+            rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+
+            return JSON.parse(rawText);
         }
 
         /* =========================================================
@@ -1005,6 +1008,7 @@ Respond ONLY in this JSON format, no markdown, no extra text:
             } catch (err) {
                 skeleton.classList.remove('show');
                 console.error(err);
+                showToast("API error, using fallback! " + err.message);
 
                 /* Fallback: generate a fun excuse locally if API fails */
                 const fallback = generateFallback(level);
