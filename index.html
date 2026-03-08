@@ -785,7 +785,7 @@
         const OPENROUTER_MODEL = 'arcee-ai/trinity-large-preview:free';
         const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
 
-        const SYSTEM_PROMPT = `You are the world's most dramatic excuse generator. You generate excuses for being late — context AND absurdity both depend on the level.
+        const SYSTEM_PROMPT = `You are the world's most dramatic excuse generator. You must generate 100% unique, unpredictable, and distinct excuses for every single request. Never repeat concepts or phrasing from previous generations.
 
 CONTEXT BY LEVEL:
 Level 1: Late to meet a friend for coffee
@@ -807,10 +807,11 @@ ABSURDITY BY LEVEL:
 9-10: Cosmic chaos, you ARE time, God asked a favor
 
 RULES:
-- First person, confident, deadpan, never apologetic
-- 3-5 sentences
-- End with one unrelated mundane observation
-- Never repeat concepts
+- VARIETY IS PRIORITY: Every excuse must be a completely fresh creative invention.
+- First person, confident, deadpan, never apologetic.
+- 3-5 sentences.
+- End with one unrelated mundane observation.
+- Never repeat concepts or metaphors.
 
 Respond ONLY in this JSON format, no markdown, no extra text:
 {
@@ -905,18 +906,22 @@ Respond ONLY in this JSON format, no markdown, no extra text:
            AI CALL  — OpenRouter API via Proxy
         ========================================================= */
         async function fetchExcuse(level) {
+            // Add a unique entropy seed to the prompt to force the LLM to differentiate
+            const entropySeed = Math.random().toString(36).substring(7);
+
             const payload = {
                 model: OPENROUTER_MODEL,
                 messages: [
                     { role: 'system', content: SYSTEM_PROMPT },
-                    { role: 'user', content: `Generate a level ${level} excuse` }
+                    { role: 'user', content: `Generate a level ${level} excuse. Reference Code: ${entropySeed}. Be wildly creative.` }
                 ],
                 max_tokens: 300,
-                temperature: 0.9
+                temperature: 1.0 // Increased temperature for more randomness
             };
 
-            // Use allorigins as a CORS proxy for client-side call
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(OPENROUTER_ENDPOINT)}`;
+            // Add a timestamp to the proxy URL to bypass any regional or proxy-level caching
+            const timestamp = Date.now();
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(OPENROUTER_ENDPOINT)}&nonce=${timestamp}`;
 
             const res = await fetch(proxyUrl, {
                 method: 'POST',
