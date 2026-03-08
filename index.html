@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>LateXcuse 😅 — Never Be Speechless Again</title>
+    <meta name="description"
+        content="Generate the perfect excuse for being late — from mildly believable to cosmically unhinged. Powered by AI chaos." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        /* =========================================================
+       RESET & TOKENS
+    ========================================================= */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --cream: #FFF8F0;
+            --coral: #FF6B35;
+            --coral-d: #CC4400;
+            --coral-l: #FF8C55;
+            --pink: #FF85A1;
+            --yellow: #FFE566;
+            --mint: #7FDBBA;
+            --white: #FFFFFF;
+            --text-h: #1A1A2E;
+            --text-b: #444444;
+            --gray-bg: #F5F5F5;
+            --shadow: 0 8px 24px rgba(0, 0, 0, .10);
+            --r-pill: 999px;
+            --r-card: 24px;
+            --r-btn: 18px;
+            --ff-head: 'Fredoka One', cursive;
+            --ff-body: 'Nunito', sans-serif;
+            --level-colors: #FFE566, #FF85A1, #7FDBBA, #C9B8FF, #FFD580,
+                #FF6B35, #7EC8E3, #B5EAD7, #FFB7B2, #FF6961;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--cream);
+            font-family: var(--ff-body);
+            color: var(--text-b);
+            min-height: 100dvh;
+            padding-bottom: 60px;
+            padding-bottom: calc(60px + env(safe-area-inset-bottom));
+            overflow-x: hidden;
+        }
+
+        /* =========================================================
+       APP SHELL
+    ========================================================= */
+        .app {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 0 20px;
+            padding-left: max(20px, env(safe-area-inset-left));
+            padding-right: max(20px, env(safe-area-inset-right));
+        }
+
+        /* =========================================================
+       HEADER
+    ========================================================= */
+        .header {
+            text-align: center;
+            padding: 40px 0 16px;
+            animation: bounceIn 400ms ease-out both;
+        }
+
+        @keyframes bounceIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header__title {
+            font-family: var(--ff-head);
+            font-size: 32px;
+            color: var(--coral);
+            line-height: 1.1;
+        }
+
+        .header__sub {
+            font-size: 14px;
+            color: #888;
+            margin-top: 6px;
+            font-weight: 700;
+        }
+
+        .wavy-divider {
+            margin: 16px auto 0;
+            width: 100%;
+            height: 18px;
+            overflow: visible;
+        }
+
+        /* =========================================================
+       SECTION LABELS
+    ========================================================= */
+        .section-label {
+            font-family: var(--ff-head);
+            font-size: 18px;
+            color: var(--text-h);
+            margin-bottom: 12px;
+        }
+
+        /* =========================================================
+       LEVEL SELECTOR
+    ========================================================= */
+        .level-section {
+            margin-top: 28px;
+        }
+
+        /* Scroller shell — positions the arrow buttons */
+        .pills-scroller {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .scroll-arrow {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--coral);
+            background: var(--white);
+            color: var(--coral);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            transition: opacity 200ms ease, background 200ms ease, color 200ms ease, transform 120ms ease;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            padding: 0;
+        }
+
+        .scroll-arrow:hover {
+            background: var(--coral);
+            color: #fff;
+        }
+
+        .scroll-arrow:active {
+            transform: scale(0.9);
+        }
+
+        .scroll-arrow.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .pills-wrapper {
+            overflow-x: auto;
+            overflow-y: visible;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            scroll-snap-type: x mandatory;
+            display: flex;
+            flex: 1;
+            gap: 8px;
+            /* Extra vertical padding so scale(1.08) doesn't clip */
+            padding: 8px 4px 10px;
+        }
+
+        .pills-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .pill {
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            background: var(--white);
+            border: 2px solid var(--coral);
+            color: var(--coral);
+            border-radius: var(--r-pill);
+            padding: 9px 16px 9px 14px;
+            font-family: var(--ff-body);
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 200ms ease, background 200ms ease, color 200ms ease, box-shadow 200ms ease;
+            white-space: nowrap;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .pill-emoji {
+            font-size: 16px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .pill-label {
+            line-height: 1;
+        }
+
+        .pill:active {
+            transform: scale(0.95);
+        }
+
+        .pill.selected {
+            background: var(--coral);
+            color: #fff;
+            transform: scale(1.08);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, .35);
+        }
+
+        @keyframes springBounce {
+            0% {
+                transform: scale(1.08);
+            }
+
+            40% {
+                transform: scale(0.96);
+            }
+
+            70% {
+                transform: scale(1.12);
+            }
+
+            100% {
+                transform: scale(1.08);
+            }
+        }
+
+        .pill.selected.just-selected {
+            animation: springBounce 300ms ease-out;
+        }
+
+        /* =========================================================
+       GENERATE BUTTON
+    ========================================================= */
+        .btn-section {
+            margin-top: 24px;
+        }
+
+        .btn-generate {
+            width: 100%;
+            max-width: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--coral), var(--coral-l));
+            color: #fff;
+            font-family: var(--ff-head);
+            font-size: 20px;
+            border: none;
+            border-radius: var(--r-btn);
+            padding: 18px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 var(--coral-d);
+            transform: translateY(0);
+            transition: transform 120ms ease, box-shadow 120ms ease, filter 200ms ease;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 60px;
+        }
+
+        .btn-generate:hover:not(:disabled) {
+            filter: brightness(1.06);
+        }
+
+        .btn-generate:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 var(--coral-d);
+        }
+
+        .btn-generate:disabled {
+            opacity: .8;
+            cursor: not-allowed;
+        }
+
+        .btn-spinning {
+            display: none;
+        }
+
+        .loading .btn-static {
+            display: none;
+        }
+
+        .loading .btn-spinning {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spin {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn-surprise {
+            display: block;
+            margin: 12px auto 0;
+            background: none;
+            border: none;
+            color: var(--coral);
+            font-family: var(--ff-body);
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
+            min-height: 44px;
+            padding: 8px 16px;
+            -webkit-tap-highlight-color: transparent;
+            transition: opacity 200ms;
+        }
+
+        .btn-surprise:hover {
+            opacity: .75;
+        }
+
+        /* =========================================================
+       SKELETON
+    ========================================================= */
+        .skeleton-card {
+            display: none;
+            background: var(--white);
+            border-radius: var(--r-card);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-top: 28px;
+            border-left: 5px solid #ddd;
+        }
+
+        .loading~* .skeleton-card,
+        .skeleton-card.show {
+            display: block;
+        }
+
+        .skel-line {
+            height: 14px;
+            border-radius: 8px;
+            background: #e0e0e0;
+            margin-bottom: 12px;
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+
+        .skel-line:nth-child(1) {
+            width: 40%;
+        }
+
+        .skel-line:nth-child(2) {
+            width: 100%;
+        }
+
+        .skel-line:nth-child(3) {
+            width: 85%;
+        }
+
+        .skel-line:nth-child(4) {
+            width: 60%;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: .4;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* =========================================================
+       EXCUSE OUTPUT CARD
+    ========================================================= */
+        .output-section {
+            margin-top: 28px;
+        }
+
+        .excuse-card {
+            background: var(--white);
+            border-radius: var(--r-card);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--yellow);
+            animation: slideUp 350ms ease-out both;
+            display: none;
+        }
+
+        .excuse-card.show {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .level-badge {
+            display: inline-flex;
+            align-items: center;
+            background: var(--yellow);
+            color: #5a3e00;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: var(--r-pill);
+            margin-bottom: 16px;
+        }
+
+        .excuse-text {
+            font-family: var(--ff-body);
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text-h);
+        }
+
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .stat-pill {
+            display: inline-flex;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: var(--r-pill);
+            line-height: 1.3;
+        }
+
+        .stat-pill.mint {
+            background: var(--mint);
+            color: #1a4a38;
+        }
+
+        .stat-pill.pink {
+            background: var(--pink);
+            color: #5a001a;
+        }
+
+        .stat-pill.yellow {
+            background: var(--yellow);
+            color: #5a3e00;
+        }
+
+        .btn-copy {
+            margin-top: 20px;
+            background: transparent;
+            border: 2px solid var(--coral);
+            color: var(--coral);
+            font-family: var(--ff-body);
+            font-weight: 700;
+            font-size: 14px;
+            border-radius: 12px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 200ms, color 200ms;
+            min-height: 44px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-copy.copied {
+            background: #22c55e;
+            border-color: #22c55e;
+            color: #fff;
+            animation: greenFlash 200ms ease;
+        }
+
+        @keyframes greenFlash {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.06);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* =========================================================
+       HISTORY STRIP
+    ========================================================= */
+        .history-section {
+            margin-top: 32px;
+        }
+
+        .history-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .history-item {
+            background: var(--gray-bg);
+            border-radius: 14px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 200ms;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .history-item:hover {
+            background: #eaeaea;
+        }
+
+        .history-item__top {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: var(--r-pill);
+            flex-shrink: 0;
+        }
+
+        .history-preview {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-b);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-full {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-h);
+            margin-top: 8px;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .history-item.expanded .history-preview {
+            display: none;
+        }
+
+        .history-item.expanded .history-full {
+            display: block;
+        }
+
+        .history-item__chevron {
+            margin-left: auto;
+            transition: transform 200ms;
+            color: #aaa;
+            flex-shrink: 0;
+        }
+
+        .history-item.expanded .history-item__chevron {
+            transform: rotate(180deg);
+        }
+
+        .btn-clear {
+            display: block;
+            margin: 12px auto 0;
+            background: none;
+            border: none;
+            color: #999;
+            font-family: var(--ff-body);
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 8px 12px;
+            min-height: 44px;
+            -webkit-tap-highlight-color: transparent;
+            transition: color 200ms;
+        }
+
+        .btn-clear:hover {
+            color: #e74c3c;
+        }
+
+        .history-empty {
+            font-size: 13px;
+            font-weight: 700;
+            color: #bbb;
+            text-align: center;
+            padding: 16px;
+        }
+
+        /* =========================================================
+       ERROR TOAST
+    ========================================================= */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #e74c3c;
+            color: #fff;
+            font-family: var(--ff-body);
+            font-weight: 700;
+            font-size: 14px;
+            padding: 12px 24px;
+            border-radius: var(--r-pill);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 300ms, transform 300ms;
+            white-space: nowrap;
+            max-width: 90vw;
+            text-align: center;
+            z-index: 9999;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* =========================================================
+       MISC
+    ========================================================= */
+        @media (min-width: 421px) {
+            body {
+                padding-top: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+
+        <!-- ═══════════════════════════════════
+       HEADER
+  ═══════════════════════════════════ -->
+        <header class="header">
+            <h1 class="header__title">LateXcuse 😅</h1>
+            <p class="header__sub">Never be speechless again.</p>
+            <svg class="wavy-divider" viewBox="0 0 380 18" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M0,9 C30,0 60,18 90,9 C120,0 150,18 180,9 C210,0 240,18 270,9 C300,0 330,18 360,9 L380,9"
+                    fill="none" stroke="#FF6B35" stroke-width="2.5" stroke-linecap="round" opacity=".6" />
+            </svg>
+        </header>
+
+        <!-- ═══════════════════════════════════
+       LEVEL SELECTOR
+  ═══════════════════════════════════ -->
+        <section class="level-section" aria-label="Situation selector">
+            <p class="section-label">Pick your situation 👇</p>
+            <div class="pills-scroller">
+                <button class="scroll-arrow hidden" id="arrowLeft" aria-label="Scroll left">&#8592;</button>
+                <div class="pills-wrapper" id="pillsWrapper" role="group" aria-label="Excuse levels">
+                    <!-- pills injected by JS -->
+                </div>
+                <button class="scroll-arrow" id="arrowRight" aria-label="Scroll right">&#8594;</button>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════
+       GENERATE BUTTON
+  ═══════════════════════════════════ -->
+        <div class="btn-section">
+            <button class="btn-generate" id="btnGenerate" aria-label="Generate excuse">
+                <span class="btn-static">Generate My Excuse 🎲</span>
+                <span class="btn-spinning">
+                    <span class="spin">🌀</span> Cooking up chaos…
+                </span>
+            </button>
+            <button class="btn-surprise" id="btnSurprise" aria-label="Pick a random level and generate">Surprise Me
+                ✨</button>
+        </div>
+
+        <!-- ═══════════════════════════════════
+       SKELETON  (shown during loading)
+  ═══════════════════════════════════ -->
+        <div class="skeleton-card" id="skeleton" aria-hidden="true" aria-live="polite">
+            <div class="skel-line"></div>
+            <div class="skel-line"></div>
+            <div class="skel-line"></div>
+            <div class="skel-line"></div>
+        </div>
+
+        <!-- ═══════════════════════════════════
+       EXCUSE CARD
+  ═══════════════════════════════════ -->
+        <div class="output-section">
+            <article class="excuse-card" id="excuseCard" aria-live="polite" aria-label="Generated excuse">
+                <div class="level-badge" id="cardBadge">Level 5 · 🎂 Own Birthday</div>
+                <p class="excuse-text" id="excuseText"></p>
+                <div class="stats-row">
+                    <span class="stat-pill mint" id="statContext">📍 Late to: —</span>
+                    <span class="stat-pill pink" id="statUnhinged">🌡️ Unhinged: —</span>
+                    <span class="stat-pill yellow" id="statBelieve">⭐ Believability: —</span>
+                </div>
+                <button class="btn-copy" id="btnCopy" aria-label="Copy excuse to clipboard">Copy Excuse 📋</button>
+            </article>
+        </div>
+
+        <!-- ═══════════════════════════════════
+       HISTORY
+  ═══════════════════════════════════ -->
+        <section class="history-section" aria-label="Excuse history">
+            <p class="section-label">Your excuse history 🗂️</p>
+            <ul class="history-list" id="historyList"></ul>
+            <button class="btn-clear" id="btnClear" aria-label="Clear excuse history">Clear History 🗑️</button>
+        </section>
+
+    </div><!-- /app -->
+
+    <!-- Error toast -->
+    <div class="toast" id="toast" role="alert" aria-live="assertive"></div>
+
+    <script>
+        /* =========================================================
+           CONSTANTS
+        ========================================================= */
+        const LEVELS = [
+            { id: 1, emoji: '☕', label: 'Friend', context: 'Coffee with a friend' },
+            { id: 2, emoji: '💼', label: 'Meeting', context: 'Work meeting' },
+            { id: 3, emoji: '💘', label: 'First Date', context: 'First date' },
+            { id: 4, emoji: '🧑‍💼', label: 'Interview', context: 'Job interview' },
+            { id: 5, emoji: '🎂', label: 'Own Birthday', context: 'Own birthday party' },
+            { id: 6, emoji: '⚖️', label: 'Court', context: 'Court appearance' },
+            { id: 7, emoji: '💍', label: 'Wedding', context: 'Own wedding' },
+            { id: 8, emoji: '🏆', label: 'Nobel Prize', context: 'Nobel Prize ceremony' },
+            { id: 9, emoji: '🌍', label: 'UN Testimony', context: 'UN testimony' },
+            { id: 10, emoji: '💥', label: 'End of World', context: 'Preventing the end of the world' },
+        ];
+
+        const LEVEL_COLORS = [
+            '#FFE566', '#FF85A1', '#7FDBBA', '#C9B8FF', '#FFD580',
+            '#FF6B35', '#7EC8E3', '#B5EAD7', '#FFB7B2', '#FF6961'
+        ];
+
+        const BADGE_TEXT_COLORS = [
+            '#5a3e00', '#5a001a', '#1a4a38', '#2a1a5a', '#5a3a00',
+            '#fff', '#00374a', '#1a4a38', '#5a001a', '#5a0000'
+        ];
+
+        // ⚠️  OpenRouter API key – runs client-side
+        // Replace with your real OpenRouter API key
+        const OPENROUTER_TOKEN = 'YOUR_OPENROUTER_KEY_HERE';
+        const OPENROUTER_MODEL = 'stepfun/step-3.5-flash:free';
+        const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
+
+        const SYSTEM_PROMPT = `You are the world's most dramatic excuse generator. You generate excuses for being late — context AND absurdity both depend on the level.
+
+CONTEXT BY LEVEL:
+Level 1: Late to meet a friend for coffee
+Level 2: Late to a work meeting
+Level 3: Late to a first date
+Level 4: Late to a job interview
+Level 5: Late to their own birthday party
+Level 6: Late to a court appearance
+Level 7: Late to their own wedding
+Level 8: Late to receive a Nobel Prize
+Level 9: Late to testify before the UN
+Level 10: Late to prevent the end of the world
+
+ABSURDITY BY LEVEL:
+1-2: Totally believable
+3-4: Slightly suspicious
+5-6: Eyebrow-raising, minor government or alien involvement
+7-8: Fully unhinged, prophecies, parallel universes
+9-10: Cosmic chaos, you ARE time, God asked a favor
+
+RULES:
+- First person, confident, deadpan, never apologetic
+- 3-5 sentences
+- End with one unrelated mundane observation
+- Never repeat concepts
+
+Respond ONLY in this JSON format, no markdown, no extra text:
+{
+  "excuse": "full excuse text here",
+  "context": "Late to: X",
+  "unhinged_level": 7,
+  "believability": "1/10 - your priest will not accept this"
+}`;
+
+        /* =========================================================
+           STATE
+        ========================================================= */
+        let selectedLevel = 5;
+        let isLoading = false;
+        let history = JSON.parse(localStorage.getItem('latexcuse_history') || '[]');
+        let lastExcuse = null;
+
+        /* =========================================================
+           DOM REFS
+        ========================================================= */
+        const pillsWrapper = document.getElementById('pillsWrapper');
+        const arrowLeft = document.getElementById('arrowLeft');
+        const arrowRight = document.getElementById('arrowRight');
+        const btnGenerate = document.getElementById('btnGenerate');
+        const btnSurprise = document.getElementById('btnSurprise');
+        const skeleton = document.getElementById('skeleton');
+        const excuseCard = document.getElementById('excuseCard');
+        const cardBadge = document.getElementById('cardBadge');
+        const excuseText = document.getElementById('excuseText');
+        const statContext = document.getElementById('statContext');
+        const statUnhinged = document.getElementById('statUnhinged');
+        const statBelieve = document.getElementById('statBelieve');
+        const btnCopy = document.getElementById('btnCopy');
+        const historyList = document.getElementById('historyList');
+        const btnClear = document.getElementById('btnClear');
+        const toast = document.getElementById('toast');
+
+        /* =========================================================
+           SCROLL ARROWS
+        ========================================================= */
+        function updateArrows() {
+            const { scrollLeft, scrollWidth, clientWidth } = pillsWrapper;
+            arrowLeft.classList.toggle('hidden', scrollLeft <= 2);
+            arrowRight.classList.toggle('hidden', scrollLeft + clientWidth >= scrollWidth - 2);
+        }
+
+        pillsWrapper.addEventListener('scroll', updateArrows, { passive: true });
+        arrowLeft.addEventListener('click', () => { pillsWrapper.scrollBy({ left: -120, behavior: 'smooth' }); });
+        arrowRight.addEventListener('click', () => { pillsWrapper.scrollBy({ left: 120, behavior: 'smooth' }); });
+
+        /* =========================================================
+           PILLS
+        ========================================================= */
+        function buildPills() {
+            pillsWrapper.innerHTML = '';
+            LEVELS.forEach(lv => {
+                const btn = document.createElement('button');
+                btn.className = 'pill' + (lv.id === selectedLevel ? ' selected' : '');
+
+                const emojiSpan = document.createElement('span');
+                emojiSpan.className = 'pill-emoji';
+                emojiSpan.textContent = lv.emoji;
+
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'pill-label';
+                labelSpan.textContent = lv.label;
+
+                btn.appendChild(emojiSpan);
+                btn.appendChild(labelSpan);
+
+                btn.setAttribute('aria-pressed', lv.id === selectedLevel ? 'true' : 'false');
+                btn.setAttribute('id', `pill-${lv.id}`);
+                btn.setAttribute('aria-label', `Level ${lv.id}: ${lv.label}`);
+                btn.addEventListener('click', () => selectLevel(lv.id, btn));
+                pillsWrapper.appendChild(btn);
+            });
+        }
+
+        function selectLevel(id, btn) {
+            if (isLoading) return;
+            selectedLevel = id;
+            document.querySelectorAll('.pill').forEach(p => {
+                p.classList.remove('selected', 'just-selected');
+                p.setAttribute('aria-pressed', 'false');
+            });
+            btn.classList.add('selected', 'just-selected');
+            btn.setAttribute('aria-pressed', 'true');
+            btn.addEventListener('animationend', () => btn.classList.remove('just-selected'), { once: true });
+        }
+
+        /* =========================================================
+           AI CALL  — OpenRouter API
+        ========================================================= */
+        async function fetchExcuse(level) {
+            const payload = {
+                model: OPENROUTER_MODEL,
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    { role: 'user', content: `Generate a level ${level} excuse` }
+                ],
+                max_tokens: 300,
+                temperature: 0.9,
+                response_format: { type: "json_object" }
+            };
+
+            const res = await fetch(OPENROUTER_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${OPENROUTER_TOKEN}`,
+                    'HTTP-Referer': window.location.href,
+                    'X-Title': 'LateXcuse'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const errText = await res.text().catch(() => 'Unknown error');
+                throw new Error(`API error ${res.status}: ${errText}`);
+            }
+
+            const data = await res.json();
+            const rawText = data?.choices?.[0]?.message?.content ?? '';
+            return JSON.parse(rawText.trim());
+        }
+
+        /* =========================================================
+           TYPEWRITER
+        ========================================================= */
+        function typewrite(el, text, msPer = 28) {
+            el.textContent = '';
+            let i = 0;
+            return new Promise(resolve => {
+                const tick = () => {
+                    if (i < text.length) {
+                        el.textContent += text[i++];
+                        setTimeout(tick, msPer);
+                    } else {
+                        resolve();
+                    }
+                };
+                tick();
+            });
+        }
+
+        /* =========================================================
+           SHOW EXCUSE
+        ========================================================= */
+        async function showExcuse(result, level) {
+            const lv = LEVELS.find(l => l.id === level);
+            const color = LEVEL_COLORS[level - 1];
+            const textClr = BADGE_TEXT_COLORS[level - 1];
+
+            excuseCard.style.borderLeftColor = color;
+            cardBadge.style.background = color;
+            cardBadge.style.color = textClr;
+            cardBadge.textContent = `Level ${lv.id} · ${lv.emoji} ${lv.label}`;
+
+            statContext.textContent = `📍 ${result.context}`;
+            statUnhinged.textContent = `🌡️ Unhinged: ${result.unhinged_level}/10`;
+            statBelieve.textContent = `⭐ Believability: ${result.believability}`;
+
+            excuseText.textContent = '';
+            excuseCard.classList.add('show');
+            excuseCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            await typewrite(excuseText, result.excuse, 28);
+        }
+
+        /* =========================================================
+           GENERATE FLOW
+        ========================================================= */
+        async function generate(level) {
+            if (isLoading) return;
+            isLoading = true;
+
+            btnGenerate.disabled = true;
+            btnSurprise.disabled = true;
+            btnGenerate.classList.add('loading');
+            skeleton.classList.add('show');
+            excuseCard.classList.remove('show');
+
+            try {
+                const result = await fetchExcuse(level);
+                lastExcuse = { level, result };
+
+                skeleton.classList.remove('show');
+                await showExcuse(result, level);
+                addToHistory(level, result);
+                renderHistory();
+
+            } catch (err) {
+                skeleton.classList.remove('show');
+                console.error(err);
+
+                /* Fallback: generate a fun excuse locally if API fails */
+                const fallback = generateFallback(level);
+                lastExcuse = { level, result: fallback };
+                await showExcuse(fallback, level);
+                addToHistory(level, fallback);
+                renderHistory();
+            } finally {
+                isLoading = false;
+                btnGenerate.disabled = false;
+                btnSurprise.disabled = false;
+                btnGenerate.classList.remove('loading');
+            }
+        }
+
+        /* =========================================================
+           FALLBACK EXCUSES (used if API key not set / API fails)
+        ========================================================= */
+        const FALLBACKS = [
+            { excuse: "I got halfway down my street when a neighbour's cat made eye contact with me and I became legally obligated to sit with it for 47 minutes. The cat was very specific about the duration. My bus pass is now expired.", context: "Late to: Coffee with a friend", unhinged_level: 2, believability: "6/10 - believable, cats are like that" },
+            { excuse: "My alarm went off but in my dream it was a fire drill, so I evacuated the dream first. By the time I woke up, both the fire drill and my punctuality were resolved. The quarterly projections look good though.", context: "Late to: Work meeting", unhinged_level: 3, believability: "5/10 - dream logic is valid" },
+            { excuse: "I rehearsed my introduction in the mirror for so long that the mirror started giving feedback. It said my posture was fine but my energy needed work. We went three rounds. I eventually won on points.", context: "Late to: First date", unhinged_level: 4, believability: "5/10 - the mirror part is suspicious" },
+            { excuse: "On my way here I was briefly recruited by an undercover HR department testing candidates in the wild. I passed. They offered me the job. I declined because I already have one. Possibly. Traffic was also bad.", context: "Late to: Job interview", unhinged_level: 4, believability: "3/10 - ambitious lie" },
+            { excuse: "The universe sent me a birthday reminder but it was in a timezone that doesn't exist yet. By the time I recalibrated my internal chronometer, the party had technically already happened in three of the twelve dimensions where I exist. On the bright side, cake is ageless. Also my shoes are damp.", context: "Late to: Own birthday party", unhinged_level: 6, believability: "2/10 - the wet shoes don't help" },
+            { excuse: "I was summoned by a more pressing legal matter: a squirrel I once represented in small claims court filed an appeal. I won, again. The precedent will protect parks for decades. My honour was non-negotiable. The bus I missed was not.", context: "Late to: Court appearance", unhinged_level: 6, believability: "1/10 - squirrels cannot file appeals" },
+            { excuse: "I was crossing the threshold of the venue when a future version of me appeared and warned that arriving on time would cause a paradox that would untie all the bow ties in a 400-mile radius, including mine. I waited it out in a café. The scone was average. You look wonderful, by the way.", context: "Late to: Own wedding", unhinged_level: 8, believability: "0/10 - your vows are filed under 'eventually'" },
+            { excuse: "I was literally in the quantum superposition of both arriving and not arriving until the observation collapsed my wave function into the wrong corridor. The committee will understand — two of them are physicists. The prize itself is fine; I signed for it astrally.", context: "Late to: Nobel Prize ceremony", unhinged_level: 8, believability: "0/10 - the committee does not accept quantum excuses" },
+            { excuse: "I AM the testimony. The delay was me asserting my nature as the living record of the events in question. Time does not subpoena Time. I arrived the moment truth required me. Also the cab app crashed. Both are equally real.", context: "Late to: UN testimony", unhinged_level: 9, believability: "0/10 - the secretary-general disagrees" },
+            { excuse: "God called. Personal favour. Non-negotiable. I held the continuum together for eleven minutes while the replacement angels clocked in. The world is fine. You are welcome. The paperwork is lodged in the Akashic Records under urgent. My stapler is missing.", context: "Late to: Preventing the end of the world", unhinged_level: 10, believability: "0/10 - the world ended briefly" },
+        ];
+
+        function generateFallback(level) {
+            const base = FALLBACKS[level - 1];
+            return { ...base };
+        }
+
+        /* =========================================================
+           HISTORY
+        ========================================================= */
+        function addToHistory(level, result) {
+            const lv = LEVELS.find(l => l.id === level);
+            history.unshift({ level, lv, result, ts: Date.now() });
+            if (history.length > 5) history.pop();
+            localStorage.setItem('latexcuse_history', JSON.stringify(history));
+        }
+
+        function renderHistory() {
+            historyList.innerHTML = '';
+            if (!history.length) {
+                historyList.innerHTML = '<li class="history-empty">No excuses yet — generate one! 🎲</li>';
+                return;
+            }
+            history.forEach((item, idx) => {
+                const lv = item.lv || LEVELS.find(l => l.id === item.level);
+                const color = LEVEL_COLORS[item.level - 1];
+                const txtC = BADGE_TEXT_COLORS[item.level - 1];
+                const preview = item.result.excuse.slice(0, 60) + (item.result.excuse.length > 60 ? '…' : '');
+
+                const li = document.createElement('li');
+                li.className = 'history-item';
+                li.innerHTML = `
+      <div class="history-item__top">
+        <span class="history-badge" style="background:${color};color:${txtC}">Lv${item.level} ${lv ? lv.emoji : ''}</span>
+        <span class="history-preview">${preview}</span>
+        <svg class="history-item__chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="history-full">${item.result.excuse}</div>
+    `;
+                li.addEventListener('click', () => li.classList.toggle('expanded'));
+                historyList.appendChild(li);
+            });
+        }
+
+        /* =========================================================
+           COPY
+        ========================================================= */
+        btnCopy.addEventListener('click', () => {
+            if (!lastExcuse) return;
+            const text = lastExcuse.result.excuse;
+            navigator.clipboard.writeText(text).then(() => {
+                btnCopy.textContent = 'Copied! ✅';
+                btnCopy.classList.add('copied');
+                setTimeout(() => {
+                    btnCopy.textContent = 'Copy Excuse 📋';
+                    btnCopy.classList.remove('copied');
+                }, 2000);
+            }).catch(() => {
+                /* Fallback */
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                btnCopy.textContent = 'Copied! ✅';
+                btnCopy.classList.add('copied');
+                setTimeout(() => {
+                    btnCopy.textContent = 'Copy Excuse 📋';
+                    btnCopy.classList.remove('copied');
+                }, 2000);
+            });
+        });
+
+        /* =========================================================
+           TOAST
+        ========================================================= */
+        function showToast(msg, duration = 3000) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(showToast._t);
+            showToast._t = setTimeout(() => toast.classList.remove('show'), duration);
+        }
+
+        /* =========================================================
+           CLEAR HISTORY
+        ========================================================= */
+        btnClear.addEventListener('click', () => {
+            history = [];
+            localStorage.removeItem('latexcuse_history');
+            renderHistory();
+            showToast('History cleared 🗑️');
+        });
+
+        /* =========================================================
+           BUTTON EVENTS
+        ========================================================= */
+        btnGenerate.addEventListener('click', () => generate(selectedLevel));
+
+        btnSurprise.addEventListener('click', () => {
+            if (isLoading) return;
+            const rand = Math.floor(Math.random() * 10) + 1;
+            selectedLevel = rand;
+            document.querySelectorAll('.pill').forEach(p => {
+                p.classList.remove('selected', 'just-selected');
+                p.setAttribute('aria-pressed', 'false');
+            });
+            const randPill = document.getElementById(`pill-${rand}`);
+            if (randPill) {
+                randPill.classList.add('selected', 'just-selected');
+                randPill.setAttribute('aria-pressed', 'true');
+                randPill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                randPill.addEventListener('animationend', () => randPill.classList.remove('just-selected'), { once: true });
+            }
+            generate(rand);
+        });
+
+        /* =========================================================
+           INIT
+        ========================================================= */
+        buildPills();
+        setTimeout(updateArrows, 50); // wait for pills to render
+        renderHistory();
+
+        /* Scroll selected pill into view on load */
+        const initPill = document.getElementById(`pill-${selectedLevel}`);
+        if (initPill) setTimeout(() => initPill.scrollIntoView({ inline: 'center' }), 200);
+    </script>
+</body>
+
+</html>
