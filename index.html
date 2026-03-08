@@ -780,10 +780,10 @@
             '#fff', '#00374a', '#1a4a38', '#5a001a', '#5a0000'
         ];
 
-        // ⚠️  OpenAI API key – runs client-side via CORS proxy
-        const OPENAI_KEY = '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';
-        const OPENAI_MODEL = 'gpt-4o-mini';
-        const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
+        // ⚠️  OpenRouter API key – runs client-side via CORS proxy
+        const OPENROUTER_TOKEN = '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';
+        const OPENROUTER_MODEL = 'arcee-ai/trinity-large-preview:free';
+        const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
 
         const SYSTEM_PROMPT = `You are the world's most dramatic excuse generator. You generate excuses for being late — context AND absurdity both depend on the level.
 
@@ -902,28 +902,29 @@ Respond ONLY in this JSON format, no markdown, no extra text:
         }
 
         /* =========================================================
-           AI CALL  — OpenAI API via Proxy
+           AI CALL  — OpenRouter API via Proxy
         ========================================================= */
         async function fetchExcuse(level) {
             const payload = {
-                model: OPENAI_MODEL,
+                model: OPENROUTER_MODEL,
                 messages: [
                     { role: 'system', content: SYSTEM_PROMPT },
                     { role: 'user', content: `Generate a level ${level} excuse` }
                 ],
                 max_tokens: 300,
-                temperature: 0.9,
-                response_format: { type: "json_object" }
+                temperature: 0.9
             };
 
             // Use allorigins as a CORS proxy for client-side call
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(OPENAI_ENDPOINT)}`;
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(OPENROUTER_ENDPOINT)}`;
 
             const res = await fetch(proxyUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${OPENAI_KEY}`
+                    'Authorization': `Bearer ${OPENROUTER_TOKEN}`,
+                    'HTTP-Referer': window.location.href,
+                    'X-Title': 'LateXcuse'
                 },
                 body: JSON.stringify(payload)
             });
@@ -934,8 +935,12 @@ Respond ONLY in this JSON format, no markdown, no extra text:
             }
 
             const data = await res.json();
-            const rawText = data?.choices?.[0]?.message?.content ?? '';
-            return JSON.parse(rawText.trim());
+            let rawText = data?.choices?.[0]?.message?.content ?? '';
+
+            // Clean markdown blocks if the model wrapped the JSON in them
+            rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+
+            return JSON.parse(rawText);
         }
 
         /* =========================================================

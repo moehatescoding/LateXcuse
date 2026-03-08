@@ -1,4 +1,4 @@
-const apiKey = "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";
+const apiKey = "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";
 
 const SYSTEM_PROMPT = `You are the world's most dramatic excuse generator. You generate excuses for being late — context AND absurdity both depend on the level.
 
@@ -18,22 +18,23 @@ RULES:
 
 async function test() {
     const payload = {
-        model: 'gpt-4o-mini',
+        model: 'arcee-ai/trinity-large-preview:free',
         messages: [
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: `Generate a level 5 excuse` }
         ],
         max_tokens: 300,
-        temperature: 0.9,
-        response_format: { type: "json_object" }
+        temperature: 0.9
     };
 
     try {
-        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
+                'Authorization': `Bearer ${apiKey}`,
+                'HTTP-Referer': 'http://localhost:3000',
+                'X-Title': 'LateXcuse'
             },
             body: JSON.stringify(payload)
         });
