@@ -780,6 +780,46 @@
             '#fff', '#00374a', '#1a4a38', '#5a001a', '#5a0000'
         ];
 
+        // ⚠️  OpenAI API key – runs client-side via CORS proxy
+        const OPENAI_KEY = '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';
+        const OPENAI_MODEL = 'gpt-4o-mini';
+        const OPENAI_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
+
+        const SYSTEM_PROMPT = `You are the world's most dramatic excuse generator. You generate excuses for being late — context AND absurdity both depend on the level.
+
+CONTEXT BY LEVEL:
+Level 1: Late to meet a friend for coffee
+Level 2: Late to a work meeting
+Level 3: Late to a first date
+Level 4: Late to a job interview
+Level 5: Late to their own birthday party
+Level 6: Late to a court appearance
+Level 7: Late to their own wedding
+Level 8: Late to receive a Nobel Prize
+Level 9: Late to testify before the UN
+Level 10: Late to prevent the end of the world
+
+ABSURDITY BY LEVEL:
+1-2: Totally believable
+3-4: Slightly suspicious
+5-6: Eyebrow-raising, minor government or alien involvement
+7-8: Fully unhinged, prophecies, parallel universes
+9-10: Cosmic chaos, you ARE time, God asked a favor
+
+RULES:
+- First person, confident, deadpan, never apologetic
+- 3-5 sentences
+- End with one unrelated mundane observation
+- Never repeat concepts
+
+Respond ONLY in this JSON format, no markdown, no extra text:
+{
+  "excuse": "full excuse text here",
+  "context": "Late to: X",
+  "unhinged_level": 7,
+  "believability": "1/10 - your priest will not accept this"
+}`;
+
         /* =========================================================
            STATE
         ========================================================= */
@@ -862,6 +902,43 @@
         }
 
         /* =========================================================
+           AI CALL  — OpenAI API via Proxy
+        ========================================================= */
+        async function fetchExcuse(level) {
+            const payload = {
+                model: OPENAI_MODEL,
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    { role: 'user', content: `Generate a level ${level} excuse` }
+                ],
+                max_tokens: 300,
+                temperature: 0.9,
+                response_format: { type: "json_object" }
+            };
+
+            // Use allorigins as a CORS proxy for client-side call
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(OPENAI_ENDPOINT)}`;
+
+            const res = await fetch(proxyUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${OPENAI_KEY}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const errText = await res.text().catch(() => 'Unknown error');
+                throw new Error(`API error ${res.status}: ${errText}`);
+            }
+
+            const data = await res.json();
+            const rawText = data?.choices?.[0]?.message?.content ?? '';
+            return JSON.parse(rawText.trim());
+        }
+
+        /* =========================================================
            TYPEWRITER
         ========================================================= */
         function typewrite(el, text, msPer = 28) {
@@ -916,9 +993,8 @@
             skeleton.classList.add('show');
             excuseCard.classList.remove('show');
 
-            // Simulate "thinking" since AI is manual now
-            setTimeout(async () => {
-                const result = generateFallback(level);
+            try {
+                const result = await fetchExcuse(level);
                 lastExcuse = { level, result };
 
                 skeleton.classList.remove('show');
@@ -926,11 +1002,23 @@
                 addToHistory(level, result);
                 renderHistory();
 
+            } catch (err) {
+                skeleton.classList.remove('show');
+                console.error(err);
+                showToast("API error, using fallback! " + err.message);
+
+                /* Fallback: generate a fun excuse locally if API fails */
+                const fallback = generateFallback(level);
+                lastExcuse = { level, result: fallback };
+                await showExcuse(fallback, level);
+                addToHistory(level, fallback);
+                renderHistory();
+            } finally {
                 isLoading = false;
                 btnGenerate.disabled = false;
                 btnSurprise.disabled = false;
                 btnGenerate.classList.remove('loading');
-            }, 800);
+            }
         }
 
         /* =========================================================
