@@ -667,6 +667,29 @@
                 padding-top: 16px;
             }
         }
+
+        .footer {
+            margin-top: 48px;
+            padding: 24px 0;
+            text-align: center;
+            border-top: 1px solid #efefef;
+        }
+
+        .footer p {
+            font-size: 14px;
+            font-weight: 700;
+            color: #999;
+            font-family: var(--ff-body);
+        }
+
+        .footer span {
+            color: var(--coral);
+            background: linear-gradient(135deg, var(--coral), var(--coral-l));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
     </style>
 </head>
 
@@ -706,7 +729,7 @@
             <button class="btn-generate" id="btnGenerate" aria-label="Generate excuse">
                 <span class="btn-static">Generate My Excuse 🎲</span>
                 <span class="btn-spinning">
-                    <span class="spin">🌀</span> Cooking up chaos…
+                    <span class="spin">🌀</span> Selecting chaos…
                 </span>
             </button>
             <button class="btn-surprise" id="btnSurprise" aria-label="Pick a random level and generate">Surprise Me
@@ -747,6 +770,13 @@
             <ul class="history-list" id="historyList"></ul>
             <button class="btn-clear" id="btnClear" aria-label="Clear excuse history">Clear History 🗑️</button>
         </section>
+
+        <!-- ═══════════════════════════════════
+               FOOTER
+          ═══════════════════════════════════ -->
+        <footer class="footer">
+            <p>Developed by <span>Moegical</span></p>
+        </footer>
 
     </div><!-- /app -->
 
@@ -868,7 +898,7 @@
         /* =========================================================
            TYPEWRITER
         ========================================================= */
-        function typewrite(el, text, msPer = 28) {
+        function typewrite(el, text, msPer = 8) {
             el.textContent = '';
             let i = 0;
             return new Promise(resolve => {
@@ -904,7 +934,7 @@
             excuseText.textContent = '';
             excuseCard.classList.add('show');
             excuseCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            await typewrite(excuseText, result.excuse, 28);
+            await typewrite(excuseText, result.excuse, 8);
         }
 
         /* =========================================================
